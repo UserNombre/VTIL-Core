@@ -93,7 +93,7 @@ namespace vtil
 		// Declare the object entry and its pool.
 		//
 		using object_entry =   std::pair<T, std::atomic<long>>;
-		using object_pool  =   object_pool<object_entry>;
+		using object_pool  =   vtil::object_pool<object_entry>;
 
 		// Wrap atomic operations on reference counter.
 		//
@@ -241,7 +241,7 @@ namespace vtil
 
 		// Gets object itself.
 		//
-		constexpr const T* get() const { return ( const T* ) pointer; }
+		constexpr const T* get() const { return reinterpret_cast<const T*>( pointer ); }
 
 		// Check if temporary pointer.
 		// - Micro optimized to generate cmp branch instead of bitmasked 
@@ -307,7 +307,7 @@ namespace vtil
 		T* operator+() 
 		{ 
 			if ( is_temporary() ) [[unlikely]]
-				return ( T* ) pointer;
+				return reinterpret_cast<T*>( pointer );
 			return own(); 
 		}
 
@@ -377,7 +377,7 @@ namespace vtil
 
 		// Redirect pointer and dereferencing operator to the reference and cast to const-qualified equivalent.
 		//
-		constexpr const T* get() const { return ( const T* ) pointer; }
+		constexpr const T* get() const { return reinterpret_cast<const T*>( pointer ); }
 		constexpr const T* operator->() const { return get(); }
 		constexpr const T& operator*() const { return *get(); }
 
